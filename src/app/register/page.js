@@ -210,13 +210,13 @@ export default function RegisterPage() {
       </div>
 
       <div className="hidden lg:flex lg:w-1/2 bg-[#fff1f0] items-center justify-center p-12 relative overflow-hidden select-none">
-        <div className="relative w-full max-w-[500px] aspect-square flex items-center justify-center animate-pulse-slow">
+        <div className="flex items-center justify-center animate-pulse-slow">
           <Image
             src="/assets/Illustrasi Login.png"
             alt="Illustrasi Register SIMS PPOB"
             fill
             priority
-            className="object-contain"
+            className="object-cover"
           />
         </div>
       </div>

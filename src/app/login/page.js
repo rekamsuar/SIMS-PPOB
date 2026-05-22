@@ -32,7 +32,6 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (token) {
-      // Save token in cookie
       document.cookie = `session_token=${token}; path=/; max-age=${
         60 * 60 * 24 * 7
       }; SameSite=Lax; Secure`;
@@ -84,7 +83,7 @@ export default function LoginPage() {
           <div />
 
           <div className="space-y-8 my-auto">
-            <div className="flex flex-col items-center justify-center text-center space-y-4">
+            <div className="flex flex-col items-center justify-center text-center space-y-10">
               <div className="flex items-center gap-2">
                 <div className="relative w-7 h-7 flex items-center justify-center">
                   <Image
@@ -92,7 +91,7 @@ export default function LoginPage() {
                     alt="SIMS PPOB Logo"
                     width={28}
                     height={28}
-                    className="object-contain"
+                    className="object-cover"
                   />
                 </div>
                 <h1 className="text-xl font-bold tracking-tight text-gray-900">
@@ -151,13 +150,13 @@ export default function LoginPage() {
       </div>
 
       <div className="hidden lg:flex lg:w-1/2 bg-[#fff1f0] items-center justify-center p-12 relative overflow-hidden select-none">
-        <div className="relative w-full max-w-[500px] aspect-square flex items-center justify-center animate-pulse-slow">
+        <div className="flex items-center justify-center animate-pulse-slow">
           <Image
             src="/assets/Illustrasi Login.png"
             alt="Illustrasi Login SIMS PPOB"
             fill
             priority
-            className="object-contain"
+            className="object-cover"
           />
         </div>
       </div>

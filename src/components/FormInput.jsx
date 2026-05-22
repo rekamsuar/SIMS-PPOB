@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import { useState } from "react";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 export default function FormInput({
-  type = 'text',
+  type = "text",
   placeholder,
   value,
   onChange,
@@ -12,24 +12,22 @@ export default function FormInput({
   error,
   name,
   required = false,
-  className = '',
+  className = "",
 }) {
   const [showPassword, setShowPassword] = useState(false);
 
-  const isPassword = type === 'password';
-  const inputType = isPassword ? (showPassword ? 'text' : 'password') : type;
+  const isPassword = type === "password";
+  const inputType = isPassword ? (showPassword ? "text" : "password") : type;
 
   return (
     <div className={`w-full flex flex-col gap-1.5 ${className}`}>
       <div className="relative flex items-center">
-        {/* Left Icon */}
         {icon && (
           <div className="absolute left-3.5 flex items-center pointer-events-none text-gray-400 select-none">
             {icon}
           </div>
         )}
 
-        {/* Input Field */}
         <input
           type={inputType}
           name={name}
@@ -38,16 +36,15 @@ export default function FormInput({
           placeholder={placeholder}
           required={required}
           className={`w-full py-3 text-sm text-black placeholder-gray-400 bg-white border rounded-md outline-none transition-all duration-200
-            ${icon ? 'pl-11' : 'px-4'}
-            ${isPassword ? 'pr-11' : 'pr-4'}
+            ${icon ? "pl-11" : "px-4"}
+            ${isPassword ? "pr-11" : "pr-4"}
             ${
               error
-                ? 'border-red-500 focus:border-red-600 focus:ring-1 focus:ring-red-500'
-                : 'border-gray-300 focus:border-gray-500 focus:ring-1 focus:ring-gray-400'
+                ? "border-red-500 focus:border-red-600 focus:ring-1 focus:ring-red-500"
+                : "border-gray-300 focus:border-gray-500 focus:ring-1 focus:ring-gray-400"
             }`}
         />
 
-        {/* Right Password Visibility Toggle */}
         {isPassword && (
           <button
             type="button"
@@ -63,8 +60,9 @@ export default function FormInput({
         )}
       </div>
 
-      {/* Error Message */}
-      {error && <span className="text-xs text-red-500 text-right">{error}</span>}
+      {error && (
+        <span className="text-xs text-red-500 text-right">{error}</span>
+      )}
     </div>
   );
 }

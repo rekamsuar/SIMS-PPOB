@@ -2,7 +2,7 @@
 
 import { Provider } from 'react-redux';
 import { store } from '@/store';
-import { setLogoutHandler } from '@/service/apiClient';
+import { setLogoutHandler } from '@/service/apiClientService';
 import { logout } from '@/features/auth/authSlice';
 
 setLogoutHandler(() => {

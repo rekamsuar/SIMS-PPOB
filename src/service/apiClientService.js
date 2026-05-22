@@ -17,7 +17,6 @@ export const setLogoutHandler = (handler) => {
   logoutHandler = handler;
 };
 
-// Request interceptor
 apiClient.interceptors.request.use(
   (config) => {
     if (typeof document !== "undefined") {
@@ -34,7 +33,6 @@ apiClient.interceptors.request.use(
   },
 );
 
-// Response interceptor
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
