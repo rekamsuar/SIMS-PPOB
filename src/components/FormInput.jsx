@@ -24,7 +24,7 @@ export default function FormInput({
     <div className={`w-full flex flex-col gap-1.5 ${className}`}>
       <div className="relative flex items-center">
         {icon && (
-          <div className="absolute left-3.5 flex items-center pointer-events-none text-gray-400 select-none">
+          <div className="absolute left-3.5 flex items-center pointer-events-none select-none">
             {icon}
           </div>
         )}
@@ -42,8 +42,8 @@ export default function FormInput({
             ${isPassword ? "pr-11" : "pr-4"}
             ${
               error
-                ? "border-red-500 focus:border-red-600 focus:ring-1 focus:ring-red-500"
-                : "border-gray-300 focus:border-gray-500 focus:ring-1 focus:ring-gray-400"
+                ? "border-red-500 focus:border-red-600 focus:ring-0 focus:ring-red-500"
+                : "border-gray-300 focus:border-red-600 focus:ring-0 focus:ring-red-500"
             }
             ${disabled ? 'opacity-80 cursor-not-allowed bg-gray-50' : ''}`}
         />

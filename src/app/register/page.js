@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { FaEnvelope, FaUser, FaLock } from "react-icons/fa";
+import { MdOutlinePerson, MdLockOutline, MdOutlineAlternateEmail } from "react-icons/md";
 import { useAppDispatch, useAppSelector } from "@/hooks/useRedux";
 import { registerUser, clearError } from "@/features/auth/authSlice";
 import FormInput from "@/components/FormInput";
@@ -146,7 +146,7 @@ export default function RegisterPage() {
                 type="email"
                 name="email"
                 placeholder="masukan email anda"
-                icon={<FaEnvelope className="w-5 h-5" />}
+                icon={<MdOutlineAlternateEmail className="w-5 h-5" />}
                 value={formData.email}
                 onChange={handleChange}
                 required
@@ -156,7 +156,7 @@ export default function RegisterPage() {
                 type="text"
                 name="first_name"
                 placeholder="nama depan"
-                icon={<FaUser className="w-5 h-5" />}
+                icon={<MdOutlinePerson className="w-5 h-5" />}
                 value={formData.first_name}
                 onChange={handleChange}
                 required
@@ -166,7 +166,7 @@ export default function RegisterPage() {
                 type="text"
                 name="last_name"
                 placeholder="nama belakang"
-                icon={<FaUser className="w-5 h-5" />}
+                icon={<MdOutlinePerson className="w-5 h-5" />}
                 value={formData.last_name}
                 onChange={handleChange}
                 required
@@ -176,7 +176,7 @@ export default function RegisterPage() {
                 type="password"
                 name="password"
                 placeholder="buat password"
-                icon={<FaLock className="w-5 h-5" />}
+                icon={<MdLockOutline className="w-5 h-5" />}
                 value={formData.password}
                 onChange={handleChange}
                 required
@@ -186,7 +186,7 @@ export default function RegisterPage() {
                 type="password"
                 name="confirm_password"
                 placeholder="konfirmasi password"
-                icon={<FaLock className="w-5 h-5" />}
+                icon={<MdLockOutline className="w-5 h-5" />}
                 value={formData.confirm_password}
                 onChange={handleChange}
                 error={errors.confirm_password}

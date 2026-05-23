@@ -1,5 +1,4 @@
 "use client";
-
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import BalanceCard from "@/components/homepage/balanceCard";
@@ -8,6 +7,7 @@ import Button from "@/components/Button";
 import Toast from "@/components/Toast";
 import Modal from "@/components/Modal";
 import { FaCheckCircle, FaTimesCircle } from "react-icons/fa";
+import { BsBadgeCc } from "react-icons/bs";
 import { transaction, getServices } from "@/service/allService";
 import { useAppDispatch } from "@/hooks/useRedux";
 import { fetchBalance } from "@/features/balance/balanceSlice";
@@ -125,6 +125,7 @@ export default function TransactionPage() {
           <FormInput
             name="amount"
             placeholder="masukan nominal"
+            icon={<BsBadgeCc className="w-5 h-5" />}
             value={amount}
             onChange={onChange}
           />

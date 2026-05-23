@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { FaEnvelope, FaLock } from "react-icons/fa";
+import { MdLockOutline, MdOutlineAlternateEmail } from "react-icons/md";
 import { useAppDispatch, useAppSelector } from "@/hooks/useRedux";
 import { loginUser, clearError } from "@/features/auth/authSlice";
 import FormInput from "@/components/FormInput";
@@ -112,7 +112,7 @@ export default function LoginPage() {
                 type="email"
                 name="email"
                 placeholder="masukan email anda"
-                icon={<FaEnvelope className="w-5 h-5" />}
+                icon={<MdOutlineAlternateEmail className="w-5 h-5" />}
                 value={formData.email}
                 onChange={handleChange}
                 required
@@ -122,7 +122,7 @@ export default function LoginPage() {
                 type="password"
                 name="password"
                 placeholder="masukan password anda"
-                icon={<FaLock className="w-5 h-5" />}
+                icon={<MdLockOutline className="w-5 h-5" />}
                 value={formData.password}
                 onChange={handleChange}
                 required

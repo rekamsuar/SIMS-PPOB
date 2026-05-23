@@ -7,7 +7,7 @@ export default function Modal({ open, onClose, children }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-md p-6 mx-4">
+      <div className="flex flex-col items-center justify-center text-center bg-white rounded-sm shadow-xl w-[300px] aspect-square p-5 mx-4">
         {children}
       </div>
     </div>

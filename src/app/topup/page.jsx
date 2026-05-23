@@ -12,6 +12,8 @@ import thousandSeparator from "@/utils/thousandSeparator";
 import { topup as topupApi } from "@/service/allService";
 import { useAppDispatch } from "@/hooks/useRedux";
 import { fetchBalance, setBalance } from "@/features/balance/balanceSlice";
+import { FaCheck } from "react-icons/fa6";
+import Image from "next/image";
 
 export default function Topup() {
   const suggestions = [10000, 20000, 50000, 100000, 250000, 500000];
@@ -25,7 +27,7 @@ export default function Topup() {
   const [loading, setLoading] = useState(false);
   const [toast, setToast] = useState({ message: "", type: "success" });
   const [modalOpen, setModalOpen] = useState(false);
-  const [modalStage, setModalStage] = useState("confirm"); // confirm, processing, success, error
+  const [modalStage, setModalStage] = useState("confirm");
   const [modalMessage, setModalMessage] = useState("");
 
   const onSelect = (val) => {
@@ -47,7 +49,7 @@ export default function Topup() {
   const handleTopup = async () => {
     if (!isValid()) return;
     setModalStage("confirm");
-    setModalMessage(`Top up sebesar Rp${thousandSeparator(Number(amount))}?`);
+    setModalMessage(` Rp${thousandSeparator(Number(amount))}?`);
     setModalOpen(true);
   };
 
@@ -57,12 +59,17 @@ export default function Topup() {
       const payload = { top_up_amount: Number(amount) };
       const res = await topupApi(payload);
       setModalStage("success");
-      setModalMessage(res?.message || `Top up sebesar Rp${thousandSeparator(Number(amount))} berhasil`);
+      setModalMessage(
+        res?.message || ` Rp${thousandSeparator(Number(amount))} berhasil`,
+      );
       setSelected(null);
       setAmount("");
     } catch (err) {
       setModalStage("error");
-      setModalMessage(err?.message || `Gagal melakukan top up sebesar Rp${thousandSeparator(Number(amount))}`);
+      setModalMessage(
+        err?.message ||
+          `Gagal melakukan top up sebesar Rp${thousandSeparator(Number(amount))}`,
+      );
     }
   };
 
@@ -126,14 +133,27 @@ export default function Topup() {
           {modalStage === "confirm" && (
             <div className="text-center">
               <div className="mb-4">
-                <div className="w-12 h-12 rounded-full bg-[#f92f16] text-white flex items-center justify-center mx-auto">
-                  <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none"><path d="M12 2L12 22" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                <div className="w-12 h-12 rounded-full text-white flex items-center justify-center mx-auto">
+                  <Image src="/assets/Logo.png" width={35} height={35} />
                 </div>
               </div>
-              <p className="text-sm text-gray-600">{modalMessage}</p>
+              <p className="text-sm text-gray-600">
+                Anda yakin untuk Top Up sebesar
+              </p>
+              <span className="font-bold text-xl">{modalMessage}</span>
               <div className="mt-6 grid gap-3">
-                <Button onClick={confirmTopup} className="!bg-[#f92f16]">Ya, lanjutkan Bayar</Button>
-                <button onClick={() => setModalOpen(false)} className="text-sm text-gray-400">Batalkan</button>
+                <button
+                  onClick={confirmTopup}
+                  className="text-sm text-[#f92f16] font-semibold"
+                >
+                  Ya, lanjutkan Top Up
+                </button>
+                <button
+                  onClick={() => setModalOpen(false)}
+                  className="text-sm text-gray-400 font-semibold"
+                >
+                  Batalkan
+                </button>
               </div>
             </div>
           )}
@@ -142,7 +162,7 @@ export default function Topup() {
             <div className="text-center">
               <div className="mb-4">
                 <div className="w-12 h-12 rounded-full bg-gray-100 text-gray-600 flex items-center justify-center mx-auto">
-                  <svg className="w-6 h-6 animate-spin" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="#d1d5db" strokeWidth="4" strokeLinecap="round"/></svg>
+                  <span className="bg-"><FaCheck /></span>
                 </div>
               </div>
               <p className="text-sm text-gray-600">Memproses pembayaran...</p>
@@ -158,7 +178,12 @@ export default function Topup() {
               </div>
               <p className="font-semibold">{modalMessage}</p>
               <div className="mt-6">
-                <button onClick={() => setModalOpen(false)} className="text-sm text-[#f92f16]">Kembali ke Beranda</button>
+                <button
+                  onClick={() => setModalOpen(false)}
+                  className="text-sm text-[#f92f16]"
+                >
+                  Kembali ke Beranda
+                </button>
               </div>
             </div>
           )}
@@ -172,7 +197,12 @@ export default function Topup() {
               </div>
               <p className="font-semibold">{modalMessage}</p>
               <div className="mt-6">
-                <button onClick={() => setModalOpen(false)} className="text-sm text-[#f92f16]">Kembali ke Beranda</button>
+                <button
+                  onClick={() => setModalOpen(false)}
+                  className="text-sm text-[#f92f16]"
+                >
+                  Kembali ke Beranda
+                </button>
               </div>
             </div>
           )}

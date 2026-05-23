@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import { MdEdit } from "react-icons/md";
+import { MdOutlinePerson, MdOutlineAlternateEmail, MdEdit } from "react-icons/md";
 import Image from "next/image";
 import FormInput from "@/components/FormInput";
 import Button from "@/components/Button";
@@ -180,6 +180,7 @@ export default function Profile() {
             name="email"
             value={data.email}
             onChange={handleChange}
+            icon={<MdOutlineAlternateEmail className="w-5 h-5" />}
             placeholder="Email"
             disabled={!editing}
           />
@@ -191,6 +192,7 @@ export default function Profile() {
             name="firstName"
             value={data.firstName}
             onChange={handleChange}
+            icon={<MdOutlinePerson className="w-5 h-5" />}
             placeholder="Nama Depan"
             disabled={!editing}
           />
@@ -202,6 +204,7 @@ export default function Profile() {
             name="lastName"
             value={data.lastName}
             onChange={handleChange}
+            icon={<MdOutlinePerson className="w-5 h-5" />}
             placeholder="Nama Belakang"
             disabled={!editing}
           />
