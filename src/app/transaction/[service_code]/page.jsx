@@ -6,7 +6,8 @@ import FormInput from "@/components/FormInput";
 import Button from "@/components/Button";
 import Toast from "@/components/Toast";
 import Modal from "@/components/Modal";
-import { FaCheckCircle, FaTimesCircle } from "react-icons/fa";
+import { FaCheck } from "react-icons/fa6";
+import { MdClose } from "react-icons/md";
 import { BsBadgeCc } from "react-icons/bs";
 import { transaction, getServices } from "@/service/allService";
 import { useAppDispatch } from "@/hooks/useRedux";
@@ -18,7 +19,9 @@ export default function TransactionPage() {
   const { service_code } = useParams();
   const dispatch = useAppDispatch();
 
+  const [transactionAmount, setTransactionAmount] = useState(0);
   const [amount, setAmount] = useState("");
+  const [displayAmount, setDisplayAmount] = useState("");
   const [service, setService] = useState(null);
   const [loading, setLoading] = useState(false);
   const [fetchingService, setFetchingService] = useState(true);
@@ -36,7 +39,7 @@ export default function TransactionPage() {
           const found = res.data.find(
             (s) =>
               s.service_code?.toLowerCase() ===
-              String(service_code).toLowerCase()
+              String(service_code).toLowerCase(),
           );
           setService(found || null);
         }
@@ -55,6 +58,7 @@ export default function TransactionPage() {
   const onChange = (e) => {
     const raw = e.target.value.replace(/[^0-9]/g, "");
     setAmount(raw);
+    setDisplayAmount(raw ? thousandSeparator(Number(raw)) : "");
   };
 
   const isValid = () => {
@@ -65,22 +69,33 @@ export default function TransactionPage() {
   const handleTransaction = async () => {
     if (!isValid() || !service_code) return;
     setModalStage("confirm");
-    setModalMessage(`Pembayaran ${service?.service_name || service_code} sebesar Rp${thousandSeparator(Number(amount))} ?`);
+    setModalMessage(`Rp${thousandSeparator(Number(amount))} ?`);
     setModalOpen(true);
   };
 
   const confirmTransaction = async () => {
     setModalStage("processing");
+
     try {
+      const nominal = Number(amount);
+
+      setTransactionAmount(nominal);
+
       const payload = {
         service_code: String(service_code).toUpperCase(),
-        total_amount: Number(amount),
+        total_amount: nominal,
       };
+
       const res = await transaction(payload);
 
       if (res?.status === 0) {
         setModalStage("success");
-        setModalMessage(res.message || `Pembayaran sebesar Rp${thousandSeparator(Number(amount))} berhasil`);
+
+        setModalMessage(
+          res.message ||
+            `Pembayaran sebesar Rp${thousandSeparator(nominal)} berhasil`,
+        );
+
         dispatch(fetchBalance());
         setAmount("");
       } else {
@@ -110,7 +125,8 @@ export default function TransactionPage() {
                 src={service.service_icon}
                 alt={service.service_name || service_code}
                 className=""
-                width={35} height={35}
+                width={35}
+                height={35}
               />
             ) : fetchingService ? (
               <div className="w-8 h-8 bg-gray-200 rounded animate-pulse" />
@@ -126,7 +142,7 @@ export default function TransactionPage() {
             name="amount"
             placeholder="masukan nominal"
             icon={<BsBadgeCc className="w-5 h-5" />}
-            value={amount}
+            value={displayAmount}
             onChange={onChange}
           />
 
@@ -153,14 +169,32 @@ export default function TransactionPage() {
           {modalStage === "confirm" && (
             <div className="text-center">
               <div className="mb-4">
-                <div className="w-12 h-12 rounded-full bg-[#f92f16] text-white flex items-center justify-center mx-auto">
-                  <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none"><path d="M12 2L12 22" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                <div className="w-12 h-12 rounded-full text-white flex items-center justify-center mx-auto">
+                  <Image
+                    src="/assets/Logo.png"
+                    width={35}
+                    height={35}
+                    alt="logo"
+                  />
                 </div>
               </div>
-              <p className="text-sm text-gray-600">{modalMessage}</p>
+              <p className="text-sm text-gray-600">
+                Beli listrik prabayar senilai
+              </p>
+              <span className="font-bold text-xl">{modalMessage}</span>
               <div className="mt-6 grid gap-3">
-                <Button onClick={confirmTransaction} className="!bg-[#f92f16]">Ya, lanjutkan Bayar</Button>
-                <button onClick={() => setModalOpen(false)} className="text-sm text-gray-400">Batalkan</button>
+                <button
+                  onClick={confirmTransaction}
+                  className="text-sm text-[#f92f16] font-semibold cursor-pointer"
+                >
+                  Ya, lanjutkan Bayar
+                </button>
+                <button
+                  onClick={() => setModalOpen(false)}
+                  className="text-sm text-gray-400 font-semibold cursor-pointer"
+                >
+                  Batalkan
+                </button>
               </div>
             </div>
           )}
@@ -169,7 +203,20 @@ export default function TransactionPage() {
             <div className="text-center">
               <div className="mb-4">
                 <div className="w-12 h-12 rounded-full bg-gray-100 text-gray-600 flex items-center justify-center mx-auto">
-                  <svg className="w-6 h-6 animate-spin" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="#d1d5db" strokeWidth="4" strokeLinecap="round"/></svg>
+                  <svg
+                    className="w-6 h-6 animate-spin"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                  >
+                    <circle
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="#d1d5db"
+                      strokeWidth="4"
+                      strokeLinecap="round"
+                    />
+                  </svg>
                 </div>
               </div>
               <p className="text-sm text-gray-600">Memproses pembayaran...</p>
@@ -179,13 +226,25 @@ export default function TransactionPage() {
           {modalStage === "success" && (
             <div className="text-center">
               <div className="mb-4">
-                <div className="w-12 h-12 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto">
-                  <FaCheckCircle className="w-6 h-6" />
+                <div className="w-12 h-12 rounded-full text-white bg-[#52BD94] flex items-center justify-center mx-auto">
+                  <FaCheck className="w-6 h-6" />
                 </div>
               </div>
-              <p className="font-semibold">{modalMessage}</p>
+              <p className="">
+                Pembayaran listrik prabayar sebesar <br />
+                <span className="font-bold text-xl">
+                  Rp{thousandSeparator(transactionAmount)}
+                </span>
+                <br />
+                berhasil!
+              </p>
               <div className="mt-6">
-                <button onClick={() => setModalOpen(false)} className="text-sm text-[#f92f16]">Kembali ke Beranda</button>
+                <button
+                  onClick={() => setModalOpen(false)}
+                  className="text-sm text-[#f92f16] font-semibold cursor-pointer"
+                >
+                  Kembali ke Beranda
+                </button>
               </div>
             </div>
           )}
@@ -193,13 +252,25 @@ export default function TransactionPage() {
           {modalStage === "error" && (
             <div className="text-center">
               <div className="mb-4">
-                <div className="w-12 h-12 rounded-full bg-red-100 text-red-600 flex items-center justify-center mx-auto">
-                  <FaTimesCircle className="w-6 h-6" />
+                <div className="w-12 h-12 rounded-full text-white bg-red-600 flex items-center justify-center mx-auto">
+                  <MdClose className="w-6 h-6" />
                 </div>
               </div>
-              <p className="font-semibold">{modalMessage}</p>
+              <p className="">
+                Pembayaran listrik prabayar sebesar <br />
+                <span className="font-bold text-xl">
+                  Rp{thousandSeparator(transactionAmount)}
+                </span>
+                <br />
+                gagal
+              </p>
               <div className="mt-6">
-                <button onClick={() => setModalOpen(false)} className="text-sm text-[#f92f16]">Kembali ke Beranda</button>
+                <button
+                  onClick={() => setModalOpen(false)}
+                  className="text-sm text-[#f92f16] font-semibold cursor-pointer"
+                >
+                  Kembali ke Beranda
+                </button>
               </div>
             </div>
           )}

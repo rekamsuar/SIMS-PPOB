@@ -28,7 +28,7 @@ export default function HomePage() {
   }, []);
 
   return (
-    <main className="max-w-7xl mx-auto px-6 py-10">
+    <main className="w-full max-w-screen-sm sm:max-w-screen-md lg:max-w-7xl mx-auto px-6 py-10">
       <section className="">
         <BalanceCard />
       </section>

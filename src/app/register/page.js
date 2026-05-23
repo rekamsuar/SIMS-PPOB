@@ -63,6 +63,16 @@ export default function RegisterPage() {
     if (toast.message) setToast({ message: "", type: "error" });
   };
 
+  const validateEmptyFields = (data) => {
+    const fieldErrors = {};
+    Object.keys(data).forEach((key) => {
+      if (!data[key] || data[key].toString().trim() === "") {
+        fieldErrors[key] = "Field wajib diisi";
+      }
+    });
+    return fieldErrors;
+  };
+
   const handleRegister = async (e) => {
     e.preventDefault();
     setErrors({});
@@ -73,7 +83,9 @@ export default function RegisterPage() {
     const { email, first_name, last_name, password, confirm_password } =
       formData;
 
-    if (!email || !first_name || !last_name || !password || !confirm_password) {
+    const emptyErrors = validateEmptyFields(formData);
+    if (Object.keys(emptyErrors).length > 0) {
+      setErrors(emptyErrors);
       setToast({
         message: "Semua field wajib diisi sebelum melakukan registrasi",
         type: "error",
@@ -149,7 +161,7 @@ export default function RegisterPage() {
                 icon={<MdOutlineAlternateEmail className="w-5 h-5" />}
                 value={formData.email}
                 onChange={handleChange}
-                required
+                error={errors.email}
               />
 
               <FormInput
@@ -159,7 +171,7 @@ export default function RegisterPage() {
                 icon={<MdOutlinePerson className="w-5 h-5" />}
                 value={formData.first_name}
                 onChange={handleChange}
-                required
+                error={errors.first_name}
               />
 
               <FormInput
@@ -169,7 +181,7 @@ export default function RegisterPage() {
                 icon={<MdOutlinePerson className="w-5 h-5" />}
                 value={formData.last_name}
                 onChange={handleChange}
-                required
+                error={errors.last_name}
               />
 
               <FormInput
@@ -179,7 +191,7 @@ export default function RegisterPage() {
                 icon={<MdLockOutline className="w-5 h-5" />}
                 value={formData.password}
                 onChange={handleChange}
-                required
+                error={errors.password}
               />
 
               <FormInput
@@ -190,7 +202,6 @@ export default function RegisterPage() {
                 value={formData.confirm_password}
                 onChange={handleChange}
                 error={errors.confirm_password}
-                required
               />
 
               <div className="pt-3">

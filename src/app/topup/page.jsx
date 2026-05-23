@@ -6,12 +6,12 @@ import FormInput from "@/components/FormInput";
 import Button from "@/components/Button";
 import Toast from "@/components/Toast";
 import Modal from "@/components/Modal";
-import { FaCheckCircle, FaTimesCircle } from "react-icons/fa";
 import { BsBadgeCc } from "react-icons/bs";
 import thousandSeparator from "@/utils/thousandSeparator";
 import { topup as topupApi } from "@/service/allService";
+import { MdClose } from "react-icons/md";
 import { useAppDispatch } from "@/hooks/useRedux";
-import { fetchBalance, setBalance } from "@/features/balance/balanceSlice";
+import { fetchBalance } from "@/features/balance/balanceSlice";
 import { FaCheck } from "react-icons/fa6";
 import Image from "next/image";
 
@@ -20,8 +20,8 @@ export default function Topup() {
   const MIN = 10000;
   const MAX = 1000000;
 
-  const dispatch = useAppDispatch();
-
+  const [topupAmount, setTopupAmount] = useState(0);
+  const [displayAmount, setDisplayAmount] = useState("");
   const [amount, setAmount] = useState("");
   const [selected, setSelected] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -33,11 +33,13 @@ export default function Topup() {
   const onSelect = (val) => {
     setSelected(val);
     setAmount(String(val));
+    setDisplayAmount(thousandSeparator(val));
   };
 
   const onChange = (e) => {
     const raw = e.target.value.replace(/[^0-9]/g, "");
     setAmount(raw);
+    setDisplayAmount(raw ? thousandSeparator(Number(raw)) : "");
     setSelected(null);
   };
 
@@ -55,15 +57,26 @@ export default function Topup() {
 
   const confirmTopup = async () => {
     setModalStage("processing");
+
     try {
-      const payload = { top_up_amount: Number(amount) };
+      const nominal = Number(amount);
+
+      setTopupAmount(nominal);
+
+      const payload = { top_up_amount: nominal };
+
       const res = await topupApi(payload);
+
       setModalStage("success");
       setModalMessage(
-        res?.message || ` Rp${thousandSeparator(Number(amount))} berhasil`,
+        res?.message || `Rp${thousandSeparator(nominal)} berhasil`,
       );
+
+      dispatch(fetchBalance());
+
       setSelected(null);
       setAmount("");
+      setDisplayAmount("");
     } catch (err) {
       setModalStage("error");
       setModalMessage(
@@ -91,7 +104,7 @@ export default function Topup() {
               name="topup"
               placeholder="masukan nominal Top Up"
               icon={<BsBadgeCc className="w-5 h-5" />}
-              value={amount}
+              value={displayAmount}
               onChange={onChange}
             />
 
@@ -134,7 +147,12 @@ export default function Topup() {
             <div className="text-center">
               <div className="mb-4">
                 <div className="w-12 h-12 rounded-full text-white flex items-center justify-center mx-auto">
-                  <Image src="/assets/Logo.png" width={35} height={35} />
+                  <Image
+                    src="/assets/Logo.png"
+                    width={35}
+                    height={35}
+                    alt="logo"
+                  />
                 </div>
               </div>
               <p className="text-sm text-gray-600">
@@ -144,13 +162,13 @@ export default function Topup() {
               <div className="mt-6 grid gap-3">
                 <button
                   onClick={confirmTopup}
-                  className="text-sm text-[#f92f16] font-semibold"
+                  className="text-sm text-[#f92f16] font-semibold cursor-pointer"
                 >
                   Ya, lanjutkan Top Up
                 </button>
                 <button
                   onClick={() => setModalOpen(false)}
-                  className="text-sm text-gray-400 font-semibold"
+                  className="text-sm text-gray-400 font-semibold cursor-pointer"
                 >
                   Batalkan
                 </button>
@@ -162,7 +180,7 @@ export default function Topup() {
             <div className="text-center">
               <div className="mb-4">
                 <div className="w-12 h-12 rounded-full bg-gray-100 text-gray-600 flex items-center justify-center mx-auto">
-                  <span className="bg-"><FaCheck /></span>
+                  <FaCheck />
                 </div>
               </div>
               <p className="text-sm text-gray-600">Memproses pembayaran...</p>
@@ -172,15 +190,22 @@ export default function Topup() {
           {modalStage === "success" && (
             <div className="text-center">
               <div className="mb-4">
-                <div className="w-12 h-12 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto">
-                  <FaCheckCircle className="w-6 h-6" />
+                <div className="w-12 h-12 rounded-full text-white bg-[#52BD94] flex items-center justify-center mx-auto">
+                  <FaCheck className="w-6 h-6" />
                 </div>
               </div>
-              <p className="font-semibold">{modalMessage}</p>
+              <p className="">
+                Top Up sebesar <br />
+                <span className="font-bold text-xl">
+                  Rp{thousandSeparator(topupAmount)}
+                </span>
+                <br />
+                berhasil!
+              </p>
               <div className="mt-6">
                 <button
                   onClick={() => setModalOpen(false)}
-                  className="text-sm text-[#f92f16]"
+                  className="text-sm text-[#f92f16] font-semibold cursor-pointer"
                 >
                   Kembali ke Beranda
                 </button>
@@ -191,15 +216,22 @@ export default function Topup() {
           {modalStage === "error" && (
             <div className="text-center">
               <div className="mb-4">
-                <div className="w-12 h-12 rounded-full bg-red-100 text-red-600 flex items-center justify-center mx-auto">
-                  <FaTimesCircle className="w-6 h-6" />
+                <div className="w-12 h-12 rounded-full text-white bg-red-600 flex items-center justify-center mx-auto">
+                  <MdClose className="w-6 h-6" />
                 </div>
               </div>
-              <p className="font-semibold">{modalMessage}</p>
+              <p className="">
+                Top Up sebesar <br />
+                <span className="font-bold text-xl">
+                  Rp{thousandSeparator(topupAmount)}
+                </span>
+                <br />
+                gagal
+              </p>
               <div className="mt-6">
                 <button
                   onClick={() => setModalOpen(false)}
-                  className="text-sm text-[#f92f16]"
+                  className="text-sm text-[#f92f16] font-semibold cursor-pointer"
                 >
                   Kembali ke Beranda
                 </button>

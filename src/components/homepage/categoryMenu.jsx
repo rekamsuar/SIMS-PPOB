@@ -32,7 +32,7 @@ export default function CategoryMenu() {
 
   if (loading) {
     return (
-      <section className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 xl:grid-cols-12 gap-6">
+      <section className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-12 gap-6">
         {[...Array(12)].map((_, i) => (
           <div key={i} className="flex flex-col items-center gap-3">
             <div className="w-16 h-16 rounded-2xl bg-gray-200 animate-pulse" />
@@ -52,7 +52,7 @@ export default function CategoryMenu() {
   }
 
   return (
-    <section className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 xl:grid-cols-12 gap-10">
+    <section className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-12 gap-6 sm:gap-8 md:gap-10">
       {services.map((item) => (
         <div
           key={item.service_code}
