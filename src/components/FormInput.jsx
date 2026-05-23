@@ -12,6 +12,7 @@ export default function FormInput({
   error,
   name,
   required = false,
+  disabled = false,
   className = "",
 }) {
   const [showPassword, setShowPassword] = useState(false);
@@ -33,6 +34,7 @@ export default function FormInput({
           name={name}
           value={value}
           onChange={onChange}
+          disabled={disabled}
           placeholder={placeholder}
           required={required}
           className={`w-full py-3 text-sm text-black placeholder-gray-400 bg-white border rounded-md outline-none transition-all duration-200
@@ -42,7 +44,8 @@ export default function FormInput({
               error
                 ? "border-red-500 focus:border-red-600 focus:ring-1 focus:ring-red-500"
                 : "border-gray-300 focus:border-gray-500 focus:ring-1 focus:ring-gray-400"
-            }`}
+            }
+            ${disabled ? 'opacity-80 cursor-not-allowed bg-gray-50' : ''}`}
         />
 
         {isPassword && (
