@@ -6,6 +6,8 @@ import BalanceCard from "@/components/homepage/balanceCard";
 import FormInput from "@/components/FormInput";
 import Button from "@/components/Button";
 import Toast from "@/components/Toast";
+import Modal from "@/components/Modal";
+import { FaCheckCircle, FaTimesCircle } from "react-icons/fa";
 import { transaction, getServices } from "@/service/allService";
 import { useAppDispatch } from "@/hooks/useRedux";
 import { fetchBalance } from "@/features/balance/balanceSlice";
@@ -21,6 +23,9 @@ export default function TransactionPage() {
   const [loading, setLoading] = useState(false);
   const [fetchingService, setFetchingService] = useState(true);
   const [toast, setToast] = useState({ message: "", type: "success" });
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalStage, setModalStage] = useState("confirm");
+  const [modalMessage, setModalMessage] = useState("");
 
   useEffect(() => {
     const fetchService = async () => {
@@ -59,7 +64,13 @@ export default function TransactionPage() {
 
   const handleTransaction = async () => {
     if (!isValid() || !service_code) return;
-    setLoading(true);
+    setModalStage("confirm");
+    setModalMessage(`Pembayaran ${service?.service_name || service_code} sebesar Rp${thousandSeparator(Number(amount))} ?`);
+    setModalOpen(true);
+  };
+
+  const confirmTransaction = async () => {
+    setModalStage("processing");
     try {
       const payload = {
         service_code: String(service_code).toUpperCase(),
@@ -68,23 +79,17 @@ export default function TransactionPage() {
       const res = await transaction(payload);
 
       if (res?.status === 0) {
-        setToast({
-          message: res.message || "Transaksi berhasil",
-          type: "success",
-        });
+        setModalStage("success");
+        setModalMessage(res.message || `Pembayaran sebesar Rp${thousandSeparator(Number(amount))} berhasil`);
         dispatch(fetchBalance());
         setAmount("");
       } else {
-        setToast({
-          message: res?.message || "Transaksi gagal.",
-          type: "error",
-        });
+        setModalStage("error");
+        setModalMessage(res?.message || "Transaksi gagal.");
       }
     } catch (err) {
-      setToast({
-        message: err?.message || "Gagal melakukan transaksi.",
-        type: "error",
-      });
+      setModalStage("error");
+      setModalMessage(err?.message || "Gagal melakukan transaksi.");
     } finally {
       setLoading(false);
     }
@@ -142,6 +147,62 @@ export default function TransactionPage() {
             onClose={() => setToast({ message: "", type: "success" })}
           />
         </div>
+
+        <Modal open={modalOpen} onClose={() => setModalOpen(false)}>
+          {modalStage === "confirm" && (
+            <div className="text-center">
+              <div className="mb-4">
+                <div className="w-12 h-12 rounded-full bg-[#f92f16] text-white flex items-center justify-center mx-auto">
+                  <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none"><path d="M12 2L12 22" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                </div>
+              </div>
+              <p className="text-sm text-gray-600">{modalMessage}</p>
+              <div className="mt-6 grid gap-3">
+                <Button onClick={confirmTransaction} className="!bg-[#f92f16]">Ya, lanjutkan Bayar</Button>
+                <button onClick={() => setModalOpen(false)} className="text-sm text-gray-400">Batalkan</button>
+              </div>
+            </div>
+          )}
+
+          {modalStage === "processing" && (
+            <div className="text-center">
+              <div className="mb-4">
+                <div className="w-12 h-12 rounded-full bg-gray-100 text-gray-600 flex items-center justify-center mx-auto">
+                  <svg className="w-6 h-6 animate-spin" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="#d1d5db" strokeWidth="4" strokeLinecap="round"/></svg>
+                </div>
+              </div>
+              <p className="text-sm text-gray-600">Memproses pembayaran...</p>
+            </div>
+          )}
+
+          {modalStage === "success" && (
+            <div className="text-center">
+              <div className="mb-4">
+                <div className="w-12 h-12 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto">
+                  <FaCheckCircle className="w-6 h-6" />
+                </div>
+              </div>
+              <p className="font-semibold">{modalMessage}</p>
+              <div className="mt-6">
+                <button onClick={() => setModalOpen(false)} className="text-sm text-[#f92f16]">Kembali ke Beranda</button>
+              </div>
+            </div>
+          )}
+
+          {modalStage === "error" && (
+            <div className="text-center">
+              <div className="mb-4">
+                <div className="w-12 h-12 rounded-full bg-red-100 text-red-600 flex items-center justify-center mx-auto">
+                  <FaTimesCircle className="w-6 h-6" />
+                </div>
+              </div>
+              <p className="font-semibold">{modalMessage}</p>
+              <div className="mt-6">
+                <button onClick={() => setModalOpen(false)} className="text-sm text-[#f92f16]">Kembali ke Beranda</button>
+              </div>
+            </div>
+          )}
+        </Modal>
       </section>
     </main>
   );

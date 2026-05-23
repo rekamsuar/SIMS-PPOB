@@ -5,6 +5,8 @@ import BalanceCard from "@/components/homepage/balanceCard";
 import FormInput from "@/components/FormInput";
 import Button from "@/components/Button";
 import Toast from "@/components/Toast";
+import Modal from "@/components/Modal";
+import { FaCheckCircle, FaTimesCircle } from "react-icons/fa";
 import { BsBadgeCc } from "react-icons/bs";
 import thousandSeparator from "@/utils/thousandSeparator";
 import { topup as topupApi } from "@/service/allService";
@@ -22,6 +24,9 @@ export default function Topup() {
   const [selected, setSelected] = useState(null);
   const [loading, setLoading] = useState(false);
   const [toast, setToast] = useState({ message: "", type: "success" });
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalStage, setModalStage] = useState("confirm"); // confirm, processing, success, error
+  const [modalMessage, setModalMessage] = useState("");
 
   const onSelect = (val) => {
     setSelected(val);
@@ -41,33 +46,23 @@ export default function Topup() {
 
   const handleTopup = async () => {
     if (!isValid()) return;
-    setLoading(true);
+    setModalStage("confirm");
+    setModalMessage(`Top up sebesar Rp${thousandSeparator(Number(amount))}?`);
+    setModalOpen(true);
+  };
+
+  const confirmTopup = async () => {
+    setModalStage("processing");
     try {
       const payload = { top_up_amount: Number(amount) };
       const res = await topupApi(payload);
-
-      if (res?.status === 0) {
-        setToast({
-          message: res.message || "Top Up Balance berhasil",
-          type: "success",
-        });
-        dispatch(setBalance(res.data?.balance ?? 0));
-        dispatch(fetchBalance());
-        setSelected(null);
-        setAmount("");
-      } else {
-        setToast({
-          message: res?.message || "Gagal melakukan top up.",
-          type: "error",
-        });
-      }
+      setModalStage("success");
+      setModalMessage(res?.message || `Top up sebesar Rp${thousandSeparator(Number(amount))} berhasil`);
+      setSelected(null);
+      setAmount("");
     } catch (err) {
-      setToast({
-        message: err?.message || "Gagal melakukan top up.",
-        type: "error",
-      });
-    } finally {
-      setLoading(false);
+      setModalStage("error");
+      setModalMessage(err?.message || `Gagal melakukan top up sebesar Rp${thousandSeparator(Number(amount))}`);
     }
   };
 
@@ -127,6 +122,61 @@ export default function Topup() {
             onClose={() => setToast({ message: "", type: "success" })}
           />
         </div>
+        <Modal open={modalOpen} onClose={() => setModalOpen(false)}>
+          {modalStage === "confirm" && (
+            <div className="text-center">
+              <div className="mb-4">
+                <div className="w-12 h-12 rounded-full bg-[#f92f16] text-white flex items-center justify-center mx-auto">
+                  <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none"><path d="M12 2L12 22" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                </div>
+              </div>
+              <p className="text-sm text-gray-600">{modalMessage}</p>
+              <div className="mt-6 grid gap-3">
+                <Button onClick={confirmTopup} className="!bg-[#f92f16]">Ya, lanjutkan Bayar</Button>
+                <button onClick={() => setModalOpen(false)} className="text-sm text-gray-400">Batalkan</button>
+              </div>
+            </div>
+          )}
+
+          {modalStage === "processing" && (
+            <div className="text-center">
+              <div className="mb-4">
+                <div className="w-12 h-12 rounded-full bg-gray-100 text-gray-600 flex items-center justify-center mx-auto">
+                  <svg className="w-6 h-6 animate-spin" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="#d1d5db" strokeWidth="4" strokeLinecap="round"/></svg>
+                </div>
+              </div>
+              <p className="text-sm text-gray-600">Memproses pembayaran...</p>
+            </div>
+          )}
+
+          {modalStage === "success" && (
+            <div className="text-center">
+              <div className="mb-4">
+                <div className="w-12 h-12 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto">
+                  <FaCheckCircle className="w-6 h-6" />
+                </div>
+              </div>
+              <p className="font-semibold">{modalMessage}</p>
+              <div className="mt-6">
+                <button onClick={() => setModalOpen(false)} className="text-sm text-[#f92f16]">Kembali ke Beranda</button>
+              </div>
+            </div>
+          )}
+
+          {modalStage === "error" && (
+            <div className="text-center">
+              <div className="mb-4">
+                <div className="w-12 h-12 rounded-full bg-red-100 text-red-600 flex items-center justify-center mx-auto">
+                  <FaTimesCircle className="w-6 h-6" />
+                </div>
+              </div>
+              <p className="font-semibold">{modalMessage}</p>
+              <div className="mt-6">
+                <button onClick={() => setModalOpen(false)} className="text-sm text-[#f92f16]">Kembali ke Beranda</button>
+              </div>
+            </div>
+          )}
+        </Modal>
       </section>
     </main>
   );
