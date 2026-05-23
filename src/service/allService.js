@@ -40,7 +40,7 @@ export const transaction = async (data) => {
   return response.data;
 };
 
-export const getTransactionHistory = async () => {
-  const response = await apiClient.get("/transaction/history");
+export const getTransactionHistory = async (params = {}) => {
+  const response = await apiClient.get("/transaction/history", { params });
   return response.data;
 };

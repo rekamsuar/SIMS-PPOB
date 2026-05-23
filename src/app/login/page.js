@@ -1,32 +1,36 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import Image from 'next/image';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { FaEnvelope, FaLock } from 'react-icons/fa';
-import { useAppDispatch, useAppSelector } from '@/hooks/useRedux';
-import { loginUser, clearError } from '@/features/auth/authSlice';
-import FormInput from '@/components/FormInput';
-import Button from '@/components/Button';
-import Toast from '@/components/Toast';
+import { useState, useEffect } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { FaEnvelope, FaLock } from "react-icons/fa";
+import { useAppDispatch, useAppSelector } from "@/hooks/useRedux";
+import { loginUser, clearError } from "@/features/auth/authSlice";
+import FormInput from "@/components/FormInput";
+import Button from "@/components/Button";
+import Toast from "@/components/Toast";
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export default function LoginPage() {
   const router = useRouter();
   const dispatch = useAppDispatch();
-  const { loading, error: authError, token } = useAppSelector((state) => state.auth);
+  const {
+    loading,
+    error: authError,
+    token,
+  } = useAppSelector((state) => state.auth);
 
   const [formData, setFormData] = useState({
-    email: '',
-    password: '',
+    email: "",
+    password: "",
   });
-  const [toast, setToast] = useState({ message: '', type: 'error' });
+  const [toast, setToast] = useState({ message: "", type: "error" });
 
   useEffect(() => {
     if (authError) {
-      setToast({ message: authError, type: 'error' });
+      setToast({ message: authError, type: "error" });
     }
   }, [authError]);
 
@@ -36,10 +40,10 @@ export default function LoginPage() {
         60 * 60 * 24 * 7
       }; SameSite=Lax; Secure`;
 
-      setToast({ message: 'Login Sukses! Mengalihkan...', type: 'success' });
+      setToast({ message: "Login Sukses! Mengalihkan...", type: "success" });
 
       setTimeout(() => {
-        router.push('/');
+        router.push("/");
       }, 1000);
     }
   }, [token, router]);
@@ -48,28 +52,28 @@ export default function LoginPage() {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
     if (authError) dispatch(clearError());
-    if (toast.message) setToast({ message: '', type: 'error' });
+    if (toast.message) setToast({ message: "", type: "error" });
   };
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setToast({ message: '', type: 'error' });
+    setToast({ message: "", type: "error" });
     dispatch(clearError());
 
     const { email, password } = formData;
 
     if (!email || !password) {
-      setToast({ message: 'Email dan password wajib diisi', type: 'error' });
+      setToast({ message: "Email dan password wajib diisi", type: "error" });
       return;
     }
 
     if (!emailRegex.test(email)) {
-      setToast({ message: 'Format email tidak valid', type: 'error' });
+      setToast({ message: "Format email tidak valid", type: "error" });
       return;
     }
 
     if (password.length < 8) {
-      setToast({ message: 'Password minimal 8 karakter', type: 'error' });
+      setToast({ message: "Password minimal 8 karakter", type: "error" });
       return;
     }
 
@@ -94,9 +98,9 @@ export default function LoginPage() {
                     className="object-cover"
                   />
                 </div>
-                <h1 className="text-xl font-bold tracking-tight text-gray-900">
+                <h3 className="text-xl font-bold tracking-tight text-gray-900">
                   SIMS PPOB
-                </h1>
+                </h3>
               </div>
               <h2 className="text-2xl font-bold text-gray-900 leading-tight">
                 Masuk atau buat akun <br /> untuk memulai
@@ -125,15 +129,22 @@ export default function LoginPage() {
               />
 
               <div className="pt-3">
-                <Button type="submit" loading={loading}>
+                <Button
+                  type="submit"
+                  loading={loading}
+                  className="cursor-pointer"
+                >
                   Masuk
                 </Button>
               </div>
             </form>
 
             <div className="text-center text-sm text-gray-500">
-              belum punya akun? registrasi{' '}
-              <Link href="/register" className="text-[#f92f16] font-bold hover:underline">
+              belum punya akun? registrasi{" "}
+              <Link
+                href="/register"
+                className="text-[#f92f16] font-bold hover:underline"
+              >
                 di sini
               </Link>
             </div>
@@ -143,7 +154,7 @@ export default function LoginPage() {
             <Toast
               message={toast.message}
               type={toast.type}
-              onClose={() => setToast({ message: '', type: 'error' })}
+              onClose={() => setToast({ message: "", type: "error" })}
             />
           </div>
         </div>

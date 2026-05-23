@@ -1,15 +1,15 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import Image from 'next/image';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { FaEnvelope, FaUser, FaLock } from 'react-icons/fa';
-import { useAppDispatch, useAppSelector } from '@/hooks/useRedux';
-import { registerUser, clearError } from '@/features/auth/authSlice';
-import FormInput from '@/components/FormInput';
-import Button from '@/components/Button';
-import Toast from '@/components/Toast';
+import { useState, useEffect } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { FaEnvelope, FaUser, FaLock } from "react-icons/fa";
+import { useAppDispatch, useAppSelector } from "@/hooks/useRedux";
+import { registerUser, clearError } from "@/features/auth/authSlice";
+import FormInput from "@/components/FormInput";
+import Button from "@/components/Button";
+import Toast from "@/components/Toast";
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -19,27 +19,30 @@ export default function RegisterPage() {
   const { loading, error: authError } = useAppSelector((state) => state.auth);
 
   const [formData, setFormData] = useState({
-    email: '',
-    first_name: '',
-    last_name: '',
-    password: '',
-    confirm_password: '',
+    email: "",
+    first_name: "",
+    last_name: "",
+    password: "",
+    confirm_password: "",
   });
   const [errors, setErrors] = useState({});
-  const [toast, setToast] = useState({ message: '', type: 'error' });
+  const [toast, setToast] = useState({ message: "", type: "error" });
   const [success, setSuccess] = useState(false);
 
   useEffect(() => {
     if (authError) {
-      setToast({ message: authError, type: 'error' });
+      setToast({ message: authError, type: "error" });
     }
   }, [authError]);
 
   useEffect(() => {
     if (success) {
-      setToast({ message: 'Registrasi sukses! Mengalihkan ke login...', type: 'success' });
+      setToast({
+        message: "Registrasi sukses! Mengalihkan ke login...",
+        type: "success",
+      });
       const timer = setTimeout(() => {
-        router.push('/login');
+        router.push("/login");
       }, 2000);
       return () => clearTimeout(timer);
     }
@@ -57,48 +60,54 @@ export default function RegisterPage() {
       });
     }
     if (authError) dispatch(clearError());
-    if (toast.message) setToast({ message: '', type: 'error' });
+    if (toast.message) setToast({ message: "", type: "error" });
   };
 
   const handleRegister = async (e) => {
     e.preventDefault();
     setErrors({});
-    setToast({ message: '', type: 'error' });
+    setToast({ message: "", type: "error" });
     setSuccess(false);
     dispatch(clearError());
 
-    const { email, first_name, last_name, password, confirm_password } = formData;
+    const { email, first_name, last_name, password, confirm_password } =
+      formData;
 
     if (!email || !first_name || !last_name || !password || !confirm_password) {
-      setToast({ message: 'Semua field wajib diisi sebelum melakukan registrasi', type: 'error' });
+      setToast({
+        message: "Semua field wajib diisi sebelum melakukan registrasi",
+        type: "error",
+      });
       return;
     }
 
     if (!emailRegex.test(email)) {
-      setToast({ message: 'Format email tidak valid', type: 'error' });
+      setToast({ message: "Format email tidak valid", type: "error" });
       return;
     }
 
     if (password.length < 8) {
-      setToast({ message: 'Password minimal 8 karakter', type: 'error' });
+      setToast({ message: "Password minimal 8 karakter", type: "error" });
       return;
     }
 
     if (password !== confirm_password) {
-      setErrors({ confirm_password: 'password tidak sama' });
-      setToast({ message: 'Konfirmasi password tidak cocok', type: 'error' });
+      setErrors({ confirm_password: "password tidak sama" });
+      setToast({ message: "Konfirmasi password tidak cocok", type: "error" });
       return;
     }
 
-    const resultAction = await dispatch(registerUser({ email, first_name, last_name, password }));
+    const resultAction = await dispatch(
+      registerUser({ email, first_name, last_name, password }),
+    );
     if (registerUser.fulfilled.match(resultAction)) {
       if (resultAction.payload.status === 0) {
         setFormData({
-          email: '',
-          first_name: '',
-          last_name: '',
-          password: '',
-          confirm_password: '',
+          email: "",
+          first_name: "",
+          last_name: "",
+          password: "",
+          confirm_password: "",
         });
         setSuccess(true);
       }
@@ -123,9 +132,9 @@ export default function RegisterPage() {
                     className="object-contain"
                   />
                 </div>
-                <h1 className="text-xl font-bold tracking-tight text-gray-900">
+                <h3 className="text-xl font-bold tracking-tight text-gray-900">
                   SIMS PPOB
-                </h1>
+                </h3>
               </div>
               <h2 className="text-2xl font-bold text-gray-900 leading-tight">
                 Lengkapi data untuk <br /> membuat akun
@@ -185,15 +194,22 @@ export default function RegisterPage() {
               />
 
               <div className="pt-3">
-                <Button type="submit" loading={loading}>
+                <Button
+                  type="submit"
+                  loading={loading}
+                  className="cursor-pointer"
+                >
                   Registrasi
                 </Button>
               </div>
             </form>
 
             <div className="text-center text-sm text-gray-500">
-              sudah punya akun? login{' '}
-              <Link href="/login" className="text-[#f92f16] font-bold hover:underline">
+              sudah punya akun? login{" "}
+              <Link
+                href="/login"
+                className="text-[#f92f16] font-bold hover:underline"
+              >
                 di sini
               </Link>
             </div>
@@ -203,7 +219,7 @@ export default function RegisterPage() {
             <Toast
               message={toast.message}
               type={toast.type}
-              onClose={() => setToast({ message: '', type: 'error' })}
+              onClose={() => setToast({ message: "", type: "error" })}
             />
           </div>
         </div>

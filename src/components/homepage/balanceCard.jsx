@@ -2,47 +2,42 @@
 import Image from "next/image";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useEffect, useState } from "react";
-import { getBalance, getProfile } from "@/service/allService";
+import { useAppSelector, useAppDispatch } from "@/hooks/useRedux";
+import { fetchBalance } from "@/features/balance/balanceSlice";
+import { getProfile } from "@/service/allService";
 import thousandSeparator from "@/utils/thousandSeparator";
 
-export default function balanceCard() {
-  const [balance, setBalance] = useState({});
+export default function BalanceCard() {
+  const dispatch = useAppDispatch();
+  const balance = useAppSelector((state) => state.balance.balance);
+  const balanceLoading = useAppSelector((state) => state.balance.loading);
+
   const [showBalance, setShowBalance] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [profileLoading, setProfileLoading] = useState(true);
   const [profile, setProfile] = useState({});
 
   useEffect(() => {
-    const fetchBalance = async () => {
-      try {
-        setLoading(true);
-        const result = await getBalance();
-        const fetched = result?.data?.balance;
-        setBalance(fetched);
-      } catch (err) {
-        setError(err?.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchBalance();
-  }, []);
+    dispatch(fetchBalance());
+  }, [dispatch]);
 
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        setLoading(true);
+        setProfileLoading(true);
         const result = await getProfile();
         const fetched = result?.data;
         setProfile(fetched);
       } catch (err) {
-        setError(err?.message);
+        console.error(err?.message);
       } finally {
-        setLoading(false);
+        setProfileLoading(false);
       }
     };
     fetchProfile();
   }, []);
+
+  const loading = balanceLoading || profileLoading;
+
   return (
     <section className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center mb-14">
       <div className="">
@@ -61,7 +56,7 @@ export default function balanceCard() {
           )}
         </div>
 
-        <p className="text-3xl text-gray-700 mb-2">Selamat datang,</p>
+        <span className="text-3xl text-gray-700 mb-2">Selamat datang,</span>
 
         <h1 className="text-5xl font-bold text-gray-900">
           {`${profile?.first_name || ""} ${profile?.last_name || ""}`}
@@ -85,7 +80,7 @@ export default function balanceCard() {
             onClick={() => setShowBalance(!showBalance)}
             className="flex items-center gap-2 text-sm"
           >
-            {showBalance ? "Sembunyikan Saldo" : "Lihat Saldo"}
+            {showBalance ? "Tutup Saldo" : "Lihat Saldo"}
 
             {showBalance ? <FaEye size={16} /> : <FaEyeSlash size={16} />}
           </button>

@@ -85,7 +85,7 @@ export default function Profile() {
         updateProfile({
           first_name: data.firstName,
           last_name: data.lastName,
-        })
+        }),
       );
 
       if (selectedFile) {
@@ -184,7 +184,9 @@ export default function Profile() {
             disabled={!editing}
           />
 
-          <label className="text-xs font-medium text-gray-600">Nama Depan</label>
+          <label className="text-xs font-medium text-gray-600">
+            Nama Depan
+          </label>
           <FormInput
             name="firstName"
             value={data.firstName}
@@ -193,7 +195,9 @@ export default function Profile() {
             disabled={!editing}
           />
 
-          <label className="text-xs font-medium text-gray-600">Nama Belakang</label>
+          <label className="text-xs font-medium text-gray-600">
+            Nama Belakang
+          </label>
           <FormInput
             name="lastName"
             value={data.lastName}
@@ -205,15 +209,20 @@ export default function Profile() {
           <div className="mt-4 grid grid-cols-1 gap-3">
             {!editing ? (
               <>
-                <Button onClick={handleEdit}>Edit Profil</Button>
+                <Button onClick={handleEdit} className="cursor-pointer">
+                  Edit Profil
+                </Button>
                 <ClientLogoutButton />
               </>
             ) : (
               <>
-                <Button onClick={handleSave} loading={loading}>
+                <Button
+                  onClick={handleSave}
+                  loading={loading}
+                  className="cursor-pointer"
+                >
                   Simpan
                 </Button>
-
               </>
             )}
           </div>

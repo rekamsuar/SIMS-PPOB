@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { getServices } from "@/service/allService";
+import Link from "next/link";
 
 export default function CategoryMenu() {
   const [services, setServices] = useState([]);
@@ -51,26 +52,28 @@ export default function CategoryMenu() {
   }
 
   return (
-    <section className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 xl:grid-cols-12 gap-6">
+    <section className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 xl:grid-cols-12 gap-10">
       {services.map((item) => (
         <div
           key={item.service_code}
           className="flex flex-col items-center gap-3 cursor-pointer group"
         >
-          <div className="w-16 h-16 rounded-2xl bg-white border border-gray-100 flex items-center justify-center transition group-hover:scale-105 shadow-sm">
-            <Image
-              src={item.service_icon}
-              alt={item.service_name}
-              width={32}
-              height={32}
-              className="object-contain"
-              unoptimized
-            />
-          </div>
+          <Link href={`/transaction/${encodeURIComponent(item.service_code.toLowerCase())}`}>
+            <div className="w-25 h-25 rounded-2xl flex items-center justify-center transition group-hover:scale-105">
+              <Image
+                src={item.service_icon}
+                alt={item.service_name}
+                width={32}
+                height={32}
+                className="object-contain"
+                unoptimized
+              />
+            </div>
 
-          <p className="text-sm text-center text-gray-700">
-            {item.service_name}
-          </p>
+            <p className="text-sm text-center text-gray-700">
+              {item.service_name}
+            </p>
+          </Link>
         </div>
       ))}
     </section>
