@@ -31,10 +31,11 @@ export default function Navbar() {
         <Link href="/">
           <div className="flex items-center gap-2">
             <Image
-              src="/assets/logo.png"
+              src="/assets/Logo.png"
               alt="logo"
               width={28}
               height={28}
+              className="object-contain"
             />
             <h4 className="font-bold text-sm sm:text-base">SIMS PPOB</h4>
           </div>

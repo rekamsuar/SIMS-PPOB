@@ -30,6 +30,8 @@ export default function Topup() {
   const [modalStage, setModalStage] = useState("confirm");
   const [modalMessage, setModalMessage] = useState("");
 
+  const dispatch = useAppDispatch();
+
   const onSelect = (val) => {
     setSelected(val);
     setAmount(String(val));
