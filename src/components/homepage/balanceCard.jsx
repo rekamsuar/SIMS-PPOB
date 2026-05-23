@@ -1,11 +1,30 @@
 "use client";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { getBalance } from "@/service/allService";
+import thousandSeparator from "@/utils/thousandSeparator";
 
 export default function balanceCard() {
+  const [balance, setBalance] = useState({});
   const [showBalance, setShowBalance] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const balance = 1250000;
+  useEffect(() => {
+    const fetchBalance = async () => {
+      try {
+        setLoading(true);
+        const result = await getBalance();
+        const fetched = result?.data?.balance;
+        setBalance(fetched);
+      } catch (err) {
+        setError(err?.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchBalance();
+  }, []);
 
   return (
     <div className="relative bg-[#F42619] rounded-3xl p-8 text-white overflow-hidden min-h-[190px]">
@@ -17,7 +36,9 @@ export default function balanceCard() {
         <p className="text-lg mb-3">Saldo anda</p>
 
         <h2 className="text-4xl font-bold mb-6">
-          Rp {showBalance ? balance.toLocaleString("id-ID") : "•••••••"}
+          {loading
+            ? "Memuat..."
+            : `Rp ${showBalance ? thousandSeparator(balance) : "•••••••"}`}
         </h2>
 
         <button
